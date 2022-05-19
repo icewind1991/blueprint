@@ -97,6 +97,12 @@ class Loader {
 	 * @return string|resource
 	 */
 	private function getDummyContent(string $name) {
+		$ext = substr($name, -3);
+		if ($ext === 'png') {
+			return fopen(__DIR__ . '/../../files/nc.png', 'r');
+		} else if ($ext === 'jpg') {
+			return fopen(__DIR__ . '/../../files/nc.jpg', 'r');
+		}
 		return "dummy content for $name";
 	}
 }
