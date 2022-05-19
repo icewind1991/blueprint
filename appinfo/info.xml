@@ -19,5 +19,6 @@
 	<commands>
 		<command>OCA\Blueprint\Command\Cleanup</command>
 		<command>OCA\Blueprint\Command\Enable</command>
+		<command>OCA\Blueprint\Command\Apply</command>
 	</commands>
 </info>

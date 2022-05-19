@@ -1,0 +1,7 @@
+[[user]]
+id = "test"
+groups = ["test"]
+files = [
+	"test.txt",
+	"foo/sub.png",
+]
