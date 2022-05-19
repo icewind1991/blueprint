@@ -24,61 +24,32 @@ declare(strict_types=1);
 namespace OCA\Blueprint\Command;
 
 use OC\Core\Command\Base;
-use OCP\Files\IRootFolder;
 use OCP\IConfig;
-use OCP\IGroupManager;
-use OCP\IUser;
-use OCP\IUserManager;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class Cleanup extends Base {
+class Enable extends Base {
 	private IConfig $config;
-	private IUserManager $userManager;
-	private IGroupManager $groupManager;
-	private IRootFolder $rootFolder;
 
-	public function __construct(IConfig $config, IUserManager $userManager, IRootFolder $rootFolder, IGroupManager $groupManager) {
+	public function __construct(IConfig $config) {
 		parent::__construct();
 		$this->config = $config;
-		$this->userManager = $userManager;
-		$this->rootFolder = $rootFolder;
-		$this->groupManager = $groupManager;
 	}
 
 	protected function configure() {
 		$this
-			->setName('blueprint:clean')
-			->setDescription('Remove all users except for the admin and remove all user files');
+			->setName('blueprint:enable')
+			->setDescription('Enable blueprint mode for this instance');
 		parent::configure();
 	}
 
 	protected function execute(InputInterface $input, OutputInterface $output): int {
-		if (!$this->config->getSystemValueBool('blueprint', false)) {
-			$output->writeln("Blueprint mode not enabled for instance");
-			return 1;
+		if ($this->config->getSystemValueBool('blueprint', false)) {
+			$output->writeln("Blueprint mode already enabled for instance");
+			return 0;
 		}
 
-		/** @var IUser[] $usersToDelete */
-		$usersToDelete = [];
-
-		$this->userManager->callForAllUsers(function(IUser $user) use (&$usersToDelete) {
-			if ($this->groupManager->isAdmin($user->getUID())) {
-				$userFolder = $this->rootFolder->getUserFolder($user->getUID());
-				$userRoot = $userFolder->getParent();
-				foreach ($userRoot->getDirectoryListing() as $child) {
-					$child->delete();
-				}
-
-				$userRoot->newFolder('files');
-			} else {
-				$usersToDelete[] = $user;
-			}
-		});
-
-		foreach ($usersToDelete as $user) {
-			$user->delete();
-		}
+		$this->config->setSystemValue('blueprint', true);
 
 		return 0;
 	}
