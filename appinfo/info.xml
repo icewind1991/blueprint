@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<info>
+	<id>blueprint</id>
+	<name>Blueprint</name>
+	<licence>AGPL</licence>
+	<author>Robin Appelman</author>
+	<summary>Automated population of Nextcloud data from templates.</summary>
+	<description>Automated population of Nextcloud data from templates, intended for preparing the instance for automated testing</description>
+	<version>0.1.2</version>
+	<namespace>Blueprint</namespace>
+	<dependencies>
+		<nextcloud min-version="24" max-version="25" />
+	</dependencies>
+
+	<website>https://github.com/nextcloud/blueprint</website>
+	<bugs>https://github.com/nextcloud/blueprint/issues</bugs>
+	<repository>https://github.com/nextcloud/blueprint.git</repository>
+
+	<commands>
+		<command>OCA\Blueprint\Command\Cleanup</command>
+	</commands>
+</info>
