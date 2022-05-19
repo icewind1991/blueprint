@@ -1,7 +1,24 @@
 [[user]]
 id = "test"
-groups = ["test"]
+groups = ["test_group"]
 files = [
 	"test.txt",
 	"foo/sub.png",
+	"empty",
 ]
+
+[[user]]
+id = "test2"
+groups = ["test"]
+
+[[share]]
+from = "test"
+to = "test2"
+file = "foo/sub.png"
+
+[[share]]
+from = "test"
+to = "test2"
+file = "test.txt"
+target = "target_folder/shared.txt"
+permissions = 15

@@ -23,6 +23,8 @@ declare(strict_types=1);
 
 namespace OCA\Blueprint\Blueprint;
 
+use OCA\Blueprint\Exception\InvalidBlueprintException;
+
 class BlueprintUser {
 	public string $id;
 	/** @var string[] */
@@ -37,6 +39,10 @@ class BlueprintUser {
 	}
 
 	public static function fromArray(array $user): BlueprintUser {
+		InvalidBlueprintException::assertField($user, 'id', 'string', 'user');
+		InvalidBlueprintException::assertOptionalField($user, 'groups', 'string[]', 'user');
+		InvalidBlueprintException::assertOptionalField($user, 'files', 'string[]', 'user');
+
 		return new BlueprintUser($user['id'], $user['groups'] ?: [], $user['files'] ?: []);
 	}
 }

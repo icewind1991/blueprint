@@ -23,86 +23,25 @@ declare(strict_types=1);
 
 namespace OCA\Blueprint\Blueprint;
 
-use OCP\Files\Folder;
-use OCP\Files\IRootFolder;
-use OCP\Files\NotFoundException;
-use OCP\IGroupManager;
-use OCP\IUserManager;
-
 class Loader {
-	private IUserManager $userManager;
-	private IGroupManager $groupManager;
-	private IRootFolder $rootFolder;
+	private UserLoader $userLoader;
+	private ShareLoader $shareLoader;
 
-	public function __construct(IUserManager $userManager, IGroupManager $groupManager, IRootFolder $rootFolder) {
-		$this->userManager = $userManager;
-		$this->groupManager = $groupManager;
-		$this->rootFolder = $rootFolder;
+	public function __construct(
+		UserLoader $userLoader,
+		ShareLoader $shareLoader
+	) {
+		$this->userLoader = $userLoader;
+		$this->shareLoader = $shareLoader;
 	}
 
 	public function apply(Blueprint $blueprint) {
 		foreach ($blueprint->users as $user) {
-			$this->applyUser($user);
-		}
-	}
-
-	private function applyUser(BlueprintUser $blueprintUser) {
-		if (!$this->userManager->userExists($blueprintUser->id)) {
-			$this->userManager->createUser($blueprintUser->id, $blueprintUser->id);
-		}
-		$user = $this->userManager->get($blueprintUser->id);
-
-		foreach ($blueprintUser->groups as $group) {
-			if (!$this->groupManager->groupExists($group)) {
-				$this->groupManager->createGroup($group);
-			}
-			$group = $this->groupManager->get($group);
-			if (!$group->inGroup($user)) {
-				$group->addUser($user);
-			}
+			$this->userLoader->applyUser($user);
 		}
 
-		$userFolder = $this->rootFolder->getUserFolder($user->getUID());
-		foreach ($blueprintUser->files as $file) {
-			$this->createFile($userFolder, $file);
+		foreach ($blueprint->shares as $share) {
+			$this->shareLoader->applyShare($share);
 		}
-	}
-
-	private function createFile(Folder $folder, string $file) {
-		if ($folder->nodeExists($file)) {
-			return;
-		}
-
-		$parts = explode('/', $file);
-		$name = array_pop($parts);
-
-		foreach ($parts as $part) {
-			try {
-				$node = $folder->get($part);
-				if ($node instanceof Folder) {
-					$folder = $node;
-				} else {
-					throw new \Exception("Tried creating a file inside another file");
-				}
-			} catch (NotFoundException $e) {
-				$folder = $folder->newFolder($part);
-			}
-		}
-
-		$folder->newFile($name, $this->getDummyContent($name));
-	}
-
-	/**
-	 * @param string $name
-	 * @return string|resource
-	 */
-	private function getDummyContent(string $name) {
-		$ext = substr($name, -3);
-		if ($ext === 'png') {
-			return fopen(__DIR__ . '/../../files/nc.png', 'r');
-		} else if ($ext === 'jpg') {
-			return fopen(__DIR__ . '/../../files/nc.jpg', 'r');
-		}
-		return "dummy content for $name";
 	}
 }

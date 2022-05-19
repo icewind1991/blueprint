@@ -28,15 +28,19 @@ use Yosymfony\Toml\Toml;
 class Blueprint {
 	/** @var BlueprintUser[] */
 	public array $users;
+	/** @var BlueprintShare[] */
+	public array $shares;
 
-	public function __construct(array $users) {
+	public function __construct(array $users, array $shares) {
 		$this->users = $users;
+		$this->shares = $shares;
 	}
 
 	public static function fromArray(array $data): Blueprint {
 		$users = array_map([BlueprintUser::class, 'fromArray'], $data['user'] ?: []);
+		$shares = array_map([BlueprintShare::class, 'fromArray'], $data['share'] ?: []);
 
-		return new Blueprint($users);
+		return new Blueprint($users, $shares);
 	}
 
 	public static function parse(string $toml): Blueprint {
