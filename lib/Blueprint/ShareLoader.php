@@ -23,7 +23,6 @@ declare(strict_types=1);
 
 namespace OCA\Blueprint\Blueprint;
 
-use OCP\Files\Folder;
 use OCP\Files\IRootFolder;
 use OCP\Files\NotFoundException;
 use OCP\Share\IManager;
@@ -34,10 +33,12 @@ class ShareLoader {
 	/** @var IShare[] */
 	private array $existingShares;
 	private IRootFolder $rootFolder;
+	private FileLoader $fileLoader;
 
-	public function __construct(IManager $shareManager, IRootFolder $rootFolder) {
+	public function __construct(IManager $shareManager, IRootFolder $rootFolder, FileLoader $fileLoader) {
 		$this->shareManager = $shareManager;
 		$this->rootFolder = $rootFolder;
+		$this->fileLoader = $fileLoader;
 		$this->existingShares = iterator_to_array($this->shareManager->getAllShares());
 	}
 
@@ -53,22 +54,8 @@ class ShareLoader {
 		}
 
 		if (strpos($blueprintShare->target, '/')) {
-			$parts = explode('/', $blueprintShare->target);
-			array_pop($parts);
 			$targetFolder = $this->rootFolder->getUserFolder($blueprintShare->to);
-
-			foreach ($parts as $part) {
-				try {
-					$node = $targetFolder->get($part);
-					if ($node instanceof Folder) {
-						$targetFolder = $node;
-					} else {
-						throw new \Exception("Tried creating a share inside another file");
-					}
-				} catch (NotFoundException $e) {
-					$targetFolder = $targetFolder->newFolder($part);
-				}
-			}
+			$this->fileLoader->createParents($targetFolder, $blueprintShare->target);
 		}
 
 		$share = $this->shareManager->newShare();

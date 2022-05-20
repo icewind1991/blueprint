@@ -10,6 +10,9 @@ files = [
 [[user]]
 id = "test2"
 groups = ["test"]
+files = [
+	"range/a[1..3]/b[1..3].txt"
+]
 
 [[share]]
 from = "test"

@@ -33,11 +33,18 @@ class UserLoader {
 	private IUserManager $userManager;
 	private IGroupManager $groupManager;
 	private IRootFolder $rootFolder;
+	private FileLoader $fileLoader;
 
-	public function __construct(IUserManager $userManager, IGroupManager $groupManager, IRootFolder $rootFolder) {
+	public function __construct(
+		IUserManager $userManager,
+		IGroupManager $groupManager,
+		IRootFolder $rootFolder,
+		FileLoader $fileLoader
+	) {
 		$this->userManager = $userManager;
 		$this->groupManager = $groupManager;
 		$this->rootFolder = $rootFolder;
+		$this->fileLoader = $fileLoader;
 	}
 
 	public function applyUser(BlueprintUser $blueprintUser) {
@@ -58,49 +65,7 @@ class UserLoader {
 
 		$userFolder = $this->rootFolder->getUserFolder($user->getUID());
 		foreach ($blueprintUser->files as $file) {
-			$this->createFile($userFolder, $file);
+			$this->fileLoader->createFile($userFolder, $file);
 		}
-	}
-
-	private function createFile(Folder $folder, string $file) {
-		if ($folder->nodeExists($file)) {
-			return;
-		}
-
-		$parts = explode('/', $file);
-		$name = array_pop($parts);
-
-		foreach ($parts as $part) {
-			try {
-				$node = $folder->get($part);
-				if ($node instanceof Folder) {
-					$folder = $node;
-				} else {
-					throw new \Exception("Tried creating a file inside another file");
-				}
-			} catch (NotFoundException $e) {
-				$folder = $folder->newFolder($part);
-			}
-		}
-
-		if (strpos($name, '.') === false) {
-			$folder->newFolder($name);
-		} else {
-			$folder->newFile($name, $this->getDummyContent($name));
-		}
-	}
-
-	/**
-	 * @param string $name
-	 * @return string|resource
-	 */
-	private function getDummyContent(string $name) {
-		$ext = substr($name, -3);
-		if ($ext === 'png') {
-			return fopen(__DIR__ . '/../../files/nc.png', 'r');
-		} else if ($ext === 'jpg') {
-			return fopen(__DIR__ . '/../../files/nc.jpg', 'r');
-		}
-		return "dummy content for $name";
 	}
 }
