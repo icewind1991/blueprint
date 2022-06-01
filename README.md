@@ -16,7 +16,7 @@ occ blueprint:apply path/to/blueprint.toml
 
 ```yml
 - name: Apply blueprint
-  uses: icewind1991/blueprint@0.1.1
+  uses: icewind1991/blueprint@v0.1.1
   with:
     blueprint: path/to/blueprint.toml
 ```
