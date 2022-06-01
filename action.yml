@@ -1,0 +1,9 @@
+name: 'Blueprint'
+description: 'Apply a blueprint to a Nextcloud instance'
+inputs:
+  blueprint:
+        description: 'path of the blueprint to apply'
+        required: true
+runs:
+    using: 'node16'
+    main: 'action/dist/index.js'
