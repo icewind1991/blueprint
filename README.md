@@ -11,3 +11,12 @@ Blueprint allows populating a Nextcloud instance with data for running tests and
 ```bash
 occ blueprint:apply path/to/blueprint.toml
 ```
+
+## As github action
+
+```yml
+- name: Apply blueprint
+  uses: icewind1991/blueprint@0.1.1
+  with:
+    blueprint: path/to/blueprint.toml
+```
