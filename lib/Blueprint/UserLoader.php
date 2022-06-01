@@ -23,9 +23,7 @@ declare(strict_types=1);
 
 namespace OCA\Blueprint\Blueprint;
 
-use OCP\Files\Folder;
 use OCP\Files\IRootFolder;
-use OCP\Files\NotFoundException;
 use OCP\IGroupManager;
 use OCP\IUserManager;
 
@@ -52,12 +50,19 @@ class UserLoader {
 			$this->userManager->createUser($blueprintUser->id, $blueprintUser->id);
 		}
 		$user = $this->userManager->get($blueprintUser->id);
+		if (!$user) {
+			throw new \Exception("Failed to create user");
+		}
 
-		foreach ($blueprintUser->groups as $group) {
-			if (!$this->groupManager->groupExists($group)) {
-				$this->groupManager->createGroup($group);
+		foreach ($blueprintUser->groups as $groupId) {
+			$group = $this->groupManager->get($groupId);
+			if (!$group) {
+				$group = $this->groupManager->createGroup($groupId);
+
+				if (!$group) {
+					throw new \Exception("Failed to create group");
+				}
 			}
-			$group = $this->groupManager->get($group);
 			if (!$group->inGroup($user)) {
 				$group->addUser($user);
 			}

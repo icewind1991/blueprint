@@ -1,13 +1,29 @@
 {
+	"type": "project",
 	"config": {
 		"vendor-dir": "composer"
 	},
 	"require": {
 		"yosymfony/toml": "^1.0"
 	},
+	"require-dev": {
+		"christophwurst/nextcloud": "dev-master",
+		"php-parallel-lint/php-parallel-lint": "^1.0.0",
+		"nextcloud/coding-standard": "^0.4.0",
+		"psalm/phar": "^4.3",
+		"doctrine/dbal": "3.0.0",
+		"phpunit/phpunit": "^8",
+		"psr/cache": "1.*"
+	},
 	"autoload": {
 		"psr-4": {
 			"OCA\\Blueprint\\": "lib/"
 		}
+	},
+	"scripts": {
+		"lint": "parallel-lint --exclude src --exclude composer --exclude target --exclude build .",
+		"cs:check": "php-cs-fixer fix --dry-run --diff",
+		"cs:fix": "php-cs-fixer fix",
+		"psalm": "psalm.phar"
 	}
 }

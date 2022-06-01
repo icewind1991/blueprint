@@ -96,7 +96,7 @@ class FileLoader {
 	 * @return string[]
 	 * @throws InvalidBlueprintException
 	 */
-	private function expandRange(string $range): array {
+	public function expandRange(string $range): array {
 		preg_match("/\[(\d+)..(\d+)\]/", $range, $matches, PREG_OFFSET_CAPTURE);
 		if (!$matches) {
 			return [$range];

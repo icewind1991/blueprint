@@ -62,7 +62,7 @@ class Cleanup extends Base {
 		/** @var IUser[] $usersToDelete */
 		$usersToDelete = [];
 
-		$this->userManager->callForAllUsers(function(IUser $user) use (&$usersToDelete) {
+		$this->userManager->callForAllUsers(function (IUser $user) use (&$usersToDelete) {
 			if ($this->groupManager->isAdmin($user->getUID())) {
 				$userFolder = $this->rootFolder->getUserFolder($user->getUID());
 				$userRoot = $userFolder->getParent();

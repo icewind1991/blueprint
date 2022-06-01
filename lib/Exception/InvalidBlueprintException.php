@@ -45,7 +45,6 @@ class InvalidBlueprintException extends \Exception {
 						throw new InvalidBlueprintException("array field $key in $parent contains a $actualType instead of only ${type}s: " . json_encode($data));
 					}
 				}
-
 			} else {
 				$actualType = gettype($data[$key]);
 				if ($actualType !== $type) {

@@ -39,7 +39,13 @@ class ShareLoader {
 		$this->shareManager = $shareManager;
 		$this->rootFolder = $rootFolder;
 		$this->fileLoader = $fileLoader;
-		$this->existingShares = iterator_to_array($this->shareManager->getAllShares());
+
+		$shares = $this->shareManager->getAllShares();
+		if (is_array($shares)) {
+			$this->existingShares = $shares;
+		} else {
+			$this->existingShares = iterator_to_array($shares);
+		}
 	}
 
 	public function applyShare(BlueprintShare $blueprintShare) {
