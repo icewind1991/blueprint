@@ -20,3 +20,13 @@ occ blueprint:apply path/to/blueprint.toml
   with:
     blueprint: path/to/blueprint.toml
 ```
+
+## Status
+
+- [x] files
+- [x] range of files
+- [x] user shares
+- [ ] group shares
+- [ ] external storages
+- [ ] groupfolders
+- [ ] more
