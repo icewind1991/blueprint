@@ -2149,14 +2149,19 @@ async function ensureApp() {
 	let {stdout} = await occ('app:list');
 	if (!stdout.includes('blueprint')) {
 		console.log('installing blueprint')
-		await cmd(`curl -L https://github.com/icewind1991/blueprint/releases/download/v0.1.0/blueprint.tar.gz | tar -xz -C apps`)
+		await cmd(`curl -L https://github.com/icewind1991/blueprint/releases/download/v0.1.2/blueprint.tar.gz | tar -xz -C apps`)
 		await occ(`app:enable --force blueprint`)
 		await occ(`blueprint:enable`)
 	}
 }
 
-async function run (blueprint) {
+async function run (blueprint, ref) {
 	await ensureApp()
+
+	if (ref) {
+		await cmd(`git fetch origin '${ref}'`)
+		await cmd(`git checkout origin/${ref} -- '${blueprint}'`)
+	}
 
 	let {code, stdout} = await occ(`blueprint:apply ${blueprint}`)
 	console.log(stdout)
@@ -2167,7 +2172,7 @@ async function run (blueprint) {
 	}
 }
 
-run(core.getInput('blueprint'))
+run(core.getInput('blueprint').trim(), core.getInput('ref').trim())
 	.catch(error => core.setFailed(error.message))
 
 })();

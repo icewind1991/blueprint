@@ -2,8 +2,11 @@ name: 'Blueprint'
 description: 'Apply a blueprint to a Nextcloud instance'
 inputs:
   blueprint:
-        description: 'path of the blueprint to apply'
-        required: true
+    description: 'path of the blueprint to apply'
+    required: true
+  ref:
+    description: 'git reference to get the blueprint from'
+    required: false
 runs:
-    using: 'node16'
-    main: 'action/dist/index.js'
+  using: 'node16'
+  main: 'action/dist/index.js'
